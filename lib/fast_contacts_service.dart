@@ -22,14 +22,25 @@ class FastContactsService {
     });
   }
 
-  static Future<List<ContactWithPhones>> getContactsWithPhone(String sort) async {
-    print(DateTime.now());
+  static Future<List<ContactWithPhones>> getContactsWithPhones({String sort = ""}) async {
+    var result = await _methodChannel.invokeMethod('getContactsWithPhone', <String, dynamic>{"sort": sort});
+//    var answer = result.map((c) {
+//      return nwe
+//    }).toList();
 
-    var answer = await _methodChannel.invokeMethod('getContactsWithPhone', <String, dynamic>{"sort": sort});
-    print(answer);
-    print(DateTime.now());
+    //todo
 
     return [];
   }
 
+  static Future<List<ContactWithPhone>> getContactsWithPhone({String sort = ""}) async {
+    List<dynamic> result = await _methodChannel.invokeMethod('getContactsWithPhone', <String, dynamic>{"sort": sort});
+    var answer = result.map((c) => _toContactWithPhone(c)).toList();
+
+    return answer;
+  }
+
+  static ContactWithPhone _toContactWithPhone(Map<dynamic, dynamic> contact) {
+    return new ContactWithPhone(contact["displayName"], contact["phoneNumber"], contact["accountType"]);
+  }
 }
