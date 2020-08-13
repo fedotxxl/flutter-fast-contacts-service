@@ -10,7 +10,7 @@ public class SwiftContactsServicePlugin: NSObject, FlutterPlugin {
     static let FORM_COULD_NOT_BE_OPEN: Int = 2
 
     public static func register(with registrar: FlutterPluginRegistrar) {
-        let channel = FlutterMethodChannel(name: "github.com/fedotxxl/flutter_fast_contacts_provider", binaryMessenger: registrar.messenger())
+        let channel = FlutterMethodChannel(name: "fast_contacts_service_method_channel", binaryMessenger: registrar.messenger())
         let instance = SwiftContactsServicePlugin()
         registrar.addMethodCallDelegate(instance, channel: channel)
     }

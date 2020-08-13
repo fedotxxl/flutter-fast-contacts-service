@@ -10,6 +10,6 @@
 
 @implementation FastContactsServicePlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-  [SwiftFastContactsServicePlugin registerWithRegistrar:registrar];
+  [SwiftContactsServicePlugin registerWithRegistrar:registrar];
 }
 @end

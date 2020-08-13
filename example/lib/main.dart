@@ -31,10 +31,15 @@ class _MyAppState extends State<MyApp> {
       var status = await Permission.contacts.request();
 
       if (status.isGranted) {
-        print(jsonEncode(FastContactsService.listIosContacts()));
+        var contacts = await FastContactsService.listIosContacts();
+
+        print(jsonEncode(contacts));
         //FastContactsService.streamContactsWithPhones().listen((p) => {});
       }
-    } on PlatformException {
+    } catch (e, stacktrace) {
+      print(e);
+      print(stacktrace);
+
       platformVersion = 'Failed to get platform version.';
     }
 
