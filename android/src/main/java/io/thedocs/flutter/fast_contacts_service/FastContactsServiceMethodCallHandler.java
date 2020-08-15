@@ -4,12 +4,13 @@ import android.annotation.TargetApi;
 import android.os.Build;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
-import io.thedocs.flutter.fast_contacts_service.domain.ContactWithPhone;
+import io.thedocs.flutter.fast_contacts_service.domain.Contact;
 import io.thedocs.flutter.fast_contacts_service.domain.FastContactsMapCastableI;
 
 public class FastContactsServiceMethodCallHandler implements MethodChannel.MethodCallHandler, FastContactsTask {
@@ -29,8 +30,8 @@ public class FastContactsServiceMethodCallHandler implements MethodChannel.Metho
     @Override
     public Object execute(MethodCall call) throws Exception {
         switch (call.method) {
-            case "getContactsWithPhone": {
-                return toMaps(this.getContactsWithPhone((String) call.argument("sort")));
+            case "listContacts": {
+                return toMaps(this.listContacts((Boolean) call.argument("emails"), (Boolean) call.argument("phones")));
             }
             default: {
                 throw new UnsupportedOperationException();
@@ -38,31 +39,12 @@ public class FastContactsServiceMethodCallHandler implements MethodChannel.Metho
         }
     }
 
-    private List<ContactWithPhone> getContactsWithPhone(String sort) {
-        System.out.println(sort);
-
-        final List<ContactWithPhone> answer = new ArrayList<>();
-
-        provider.streamContactsWithPhones(
-                new FastContactsProvider.OnNextCallback<ContactWithPhone>() {
-                    @Override
-                    public void onNext(ContactWithPhone contact) {
-                        answer.add(contact);
-                    }
-                },
-                new FastContactsProvider.OnLastCallback() {
-                    @Override
-                    public void onLast() {
-
-                    }
-                }
-        );
-
-        return answer;
+    private Collection<Contact> listContacts(Boolean phones, Boolean emails) {
+        return provider.listContacts(phones, emails);
     }
 
-    private List<Map<String, Object>> toMaps(List<? extends FastContactsMapCastableI> items) {
-        List<Map<String, Object>> answer =new ArrayList<>(items.size());
+    private List<Map<String, Object>> toMaps(Collection<? extends FastContactsMapCastableI> items) {
+        List<Map<String, Object>> answer = new ArrayList<>(items.size());
 
         for (FastContactsMapCastableI item : items) {
             answer.add(item.toMap());

@@ -30,12 +30,6 @@ class _MyAppState extends State<MyApp> {
     try {
       var status = await Permission.contacts.request();
 
-      if (status.isGranted) {
-        var contacts = await FastContactsService.listIosContacts();
-
-        print(jsonEncode(contacts));
-        //FastContactsService.streamContactsWithPhones().listen((p) => {});
-      }
     } catch (e, stacktrace) {
       print(e);
       print(stacktrace);
@@ -61,7 +55,17 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: Center(
-          child: Text('Running on: $_platformVersion\n'),
+          child: FlatButton(
+            child: Text("Get contacts"),
+            onPressed: () async {
+              var now = DateTime.now();
+              var contacts = await FastContactsService.listContacts();
+              var spent = DateTime.now().millisecondsSinceEpoch - now.millisecondsSinceEpoch;
+
+              print(jsonEncode(contacts));
+              print(spent);
+            },
+          ),
         ),
       ),
     );
