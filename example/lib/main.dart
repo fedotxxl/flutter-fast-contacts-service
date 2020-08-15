@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -29,7 +31,7 @@ class _MyAppState extends State<MyApp> {
       var status = await Permission.contacts.request();
 
       if (status.isGranted) {
-        FastContactsService.getContactsWithPhone("sort by abc");
+        print(jsonEncode(FastContactsService.listIosContacts()));
         //FastContactsService.streamContactsWithPhones().listen((p) => {});
       }
     } on PlatformException {

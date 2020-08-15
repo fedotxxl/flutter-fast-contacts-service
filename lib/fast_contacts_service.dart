@@ -40,6 +40,12 @@ class FastContactsService {
     return answer;
   }
 
+  static Future<List<dynamic>> listIosContacts() async {
+    List<dynamic> result = await _methodChannel.invokeMethod('listContacts', <String, dynamic>{"iOSLocalizedLabels": false});
+
+    return result;
+  }
+
   static ContactWithPhone _toContactWithPhone(Map<dynamic, dynamic> contact) {
     return new ContactWithPhone(contact["displayName"], contact["phoneNumber"], contact["accountType"]);
   }
