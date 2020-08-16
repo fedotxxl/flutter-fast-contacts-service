@@ -59,7 +59,7 @@ class _MyAppState extends State<MyApp> {
             child: Text("Get contacts"),
             onPressed: () async {
               var now = DateTime.now();
-              var contacts = await FastContactsService.listContacts();
+              var contacts = await FastContactsService.listContacts(phones: true);
               var spent = DateTime.now().millisecondsSinceEpoch - now.millisecondsSinceEpoch;
 
               print(jsonEncode(contacts));

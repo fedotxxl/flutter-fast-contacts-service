@@ -25,13 +25,9 @@ public class FastContactsProvider {
         PhoneTypeProvider phoneTypeProvider = new PhoneTypeProvider(registrar.context().getResources());
 
         Cursor c = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                new String[]{ContactsContract.Data.CONTACT_ID,
-                        ContactsContract.Contacts.DISPLAY_NAME,
-                        ContactsContract.CommonDataKinds.Phone.NUMBER,
-                        ContactsContract.CommonDataKinds.Phone.TYPE,
-                        ContactsContract.RawContacts.ACCOUNT_TYPE},
+                getQueryData(queryPhones, queryEmails),
                 ContactsContract.RawContacts.ACCOUNT_TYPE + " <> 'google' ",
-                null, "upper("+ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + ") ASC");
+                null, "upper(" + ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + ") ASC");
 
         if (c.getCount() <= 0) {
             return new ArrayList<>();
@@ -42,8 +38,6 @@ public class FastContactsProvider {
                 String contactId = c.getString(c.getColumnIndex(ContactsContract.Data.CONTACT_ID));
                 String displayName = c.getString(c.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
                 String accountType = c.getString(c.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_TYPE));
-                String phoneNumber = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                Contact.PhoneType phoneType = phoneTypeProvider.getPhoneType(c.getInt(c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE)));
 
                 Contact contact = contacts.get(contactId);
 
@@ -52,12 +46,35 @@ public class FastContactsProvider {
                     contacts.put(contactId, contact);
                 }
 
-                contact.addPhone(new Contact.Phone(phoneNumber, phoneType));
+                if (queryPhones) {
+                    String phoneNumber = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                    Contact.PhoneType phoneType = phoneTypeProvider.getPhoneType(c.getInt(c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE)));
+
+                    if (phoneNumber != null && !phoneNumber.equals("")) {
+                        contact.addPhone(new Contact.Phone(phoneNumber, phoneType));
+                    }
+                }
             }
 
             return contacts.values();
         }
     }
+
+    private String[] getQueryData(Boolean queryPhones, Boolean queryEmails) {
+        ArrayList<String> answer = new ArrayList<>();
+
+        answer.add(ContactsContract.Data.CONTACT_ID);
+        answer.add(ContactsContract.Contacts.DISPLAY_NAME);
+        answer.add(ContactsContract.RawContacts.ACCOUNT_TYPE);
+
+        if (queryPhones) {
+            answer.add(ContactsContract.CommonDataKinds.Phone.NUMBER);
+            answer.add(ContactsContract.CommonDataKinds.Phone.TYPE);
+        }
+
+        return answer.toArray(new String[0]);
+    }
+
 
     private ContentResolver getContentResolver() {
         return registrar.context().getContentResolver();

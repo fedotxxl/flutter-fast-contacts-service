@@ -31,7 +31,7 @@ public class FastContactsServiceMethodCallHandler implements MethodChannel.Metho
     public Object execute(MethodCall call) throws Exception {
         switch (call.method) {
             case "listContacts": {
-                return toMaps(this.listContacts((Boolean) call.argument("emails"), (Boolean) call.argument("phones")));
+                return toMaps(this.listContacts((Boolean) call.argument("phones"), (Boolean) call.argument("emails")));
             }
             default: {
                 throw new UnsupportedOperationException();
