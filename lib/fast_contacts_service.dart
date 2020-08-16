@@ -9,8 +9,8 @@ import 'contact.dart';
 class FastContactsService {
   static const MethodChannel _methodChannel = const MethodChannel('github.com/fedotxxl/flutter_fast_contacts_provider');
 
-  static Future<List<dynamic>> listContacts({phones = false, emails = false}) async {
-    List<dynamic> result = await _methodChannel.invokeMethod('listContacts', <String, dynamic>{"phones": phones, "emails": emails});
+  static Future<List<dynamic>> listContacts({phones = true}) async {
+    List<dynamic> result = await _methodChannel.invokeMethod('listContacts', <String, dynamic>{"phones": phones});
 
     return result;
   }

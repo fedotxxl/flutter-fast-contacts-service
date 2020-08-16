@@ -31,7 +31,7 @@ public class FastContactsServiceMethodCallHandler implements MethodChannel.Metho
     public Object execute(MethodCall call) throws Exception {
         switch (call.method) {
             case "listContacts": {
-                return toMaps(this.listContacts((Boolean) call.argument("phones"), (Boolean) call.argument("emails")));
+                return toMaps(this.listContacts((Boolean) call.argument("phones")));
             }
             default: {
                 throw new UnsupportedOperationException();
@@ -39,8 +39,8 @@ public class FastContactsServiceMethodCallHandler implements MethodChannel.Metho
         }
     }
 
-    private Collection<Contact> listContacts(Boolean phones, Boolean emails) {
-        return provider.listContacts(phones, emails);
+    private Collection<Contact> listContacts(Boolean phones) {
+        return provider.listContacts(phones);
     }
 
     private List<Map<String, Object>> toMaps(Collection<? extends FastContactsMapCastableI> items) {

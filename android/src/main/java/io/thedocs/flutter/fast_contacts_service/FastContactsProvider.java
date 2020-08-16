@@ -21,11 +21,11 @@ public class FastContactsProvider {
     }
 
     @TargetApi(Build.VERSION_CODES.ECLAIR)
-    public Collection<Contact> listContacts(Boolean queryPhones, Boolean queryEmails) {
-        PhoneTypeProvider phoneTypeProvider = new PhoneTypeProvider(registrar.context().getResources());
+    public Collection<Contact> listContacts(Boolean queryPhones) {
+        PhoneTypeProvider phoneTypeProvider = new PhoneTypeProvider();
 
         Cursor c = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                getQueryData(queryPhones, queryEmails),
+                getQueryData(queryPhones),
                 ContactsContract.RawContacts.ACCOUNT_TYPE + " <> 'google' ",
                 null, "upper(" + ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + ") ASC");
 
@@ -60,7 +60,7 @@ public class FastContactsProvider {
         }
     }
 
-    private String[] getQueryData(Boolean queryPhones, Boolean queryEmails) {
+    private String[] getQueryData(Boolean queryPhones) {
         ArrayList<String> answer = new ArrayList<>();
 
         answer.add(ContactsContract.Data.CONTACT_ID);
@@ -75,44 +75,26 @@ public class FastContactsProvider {
         return answer.toArray(new String[0]);
     }
 
-
     private ContentResolver getContentResolver() {
         return registrar.context().getContentResolver();
     }
 
     private static class PhoneTypeProvider {
 
-        private static Map<String, Contact.PhoneType> PHONE_TYPES_BY_LABEL;
-
-        private Resources resources;
-        private Map<Integer, Contact.PhoneType> phoneTypes;
+        private static Map<Integer, Contact.PhoneType> PHONE_TYPES_BY_ID;
 
         static {
-            PHONE_TYPES_BY_LABEL = new HashMap<>();
-            PHONE_TYPES_BY_LABEL.put("home", Contact.PhoneType.HOME);
-            PHONE_TYPES_BY_LABEL.put("mobile", Contact.PhoneType.MOBILE);
-            PHONE_TYPES_BY_LABEL.put("work", Contact.PhoneType.WORK);
+            PHONE_TYPES_BY_ID = new HashMap<>();
+            PHONE_TYPES_BY_ID.put(ContactsContract.CommonDataKinds.Phone.TYPE_HOME, Contact.PhoneType.HOME);
+            PHONE_TYPES_BY_ID.put(ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE, Contact.PhoneType.MOBILE);
+            PHONE_TYPES_BY_ID.put(ContactsContract.CommonDataKinds.Phone.TYPE_WORK, Contact.PhoneType.WORK);
         }
 
-        public PhoneTypeProvider(Resources resources) {
-            this.resources = resources;
-            this.phoneTypes = new HashMap<>();
+        public PhoneTypeProvider() {
         }
 
         public Contact.PhoneType getPhoneType(int labelType) {
-            Contact.PhoneType phoneType = this.phoneTypes.get(labelType);
-
-            if (phoneType == null) {
-                phoneType = doGetPhoneType(labelType);
-                this.phoneTypes.put(labelType, phoneType);
-            }
-
-            return phoneType;
-        }
-
-        private Contact.PhoneType doGetPhoneType(int labelType) {
-            String phoneLabel = ContactsContract.CommonDataKinds.Phone.getTypeLabel(resources, labelType, "other").toString().toLowerCase();
-            Contact.PhoneType phoneType = PHONE_TYPES_BY_LABEL.get(phoneLabel);
+            Contact.PhoneType phoneType = PhoneTypeProvider.PHONE_TYPES_BY_ID.get(labelType);
 
             if (phoneType != null) {
                 return phoneType;
